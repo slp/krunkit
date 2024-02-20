@@ -19,6 +19,7 @@ extern "C" {
     fn krun_add_virtiofs(ctx_id: u32, c_tag: *const c_char, c_path: *const c_char) -> i32;
     fn krun_set_gvproxy_path(ctx_id: u32, c_path: *const c_char) -> i32;
     fn krun_set_net_mac(ctx_id: u32, c_mac: *const u8) -> i32;
+    fn krun_set_gpu_options(ctx_id: u32, virgl_flags: u32) -> i32;
 }
 
 /// Each virito device configures itself with krun differently. This is used by each virtio device
@@ -111,6 +112,8 @@ impl KrunContextSet for BlkConfig {
         if krun_set_root_disk(id, path_cstr.as_ptr()) < 0 {
             return Err(anyhow!("unable to set virtio-blk root disk"));
         }
+
+        krun_set_gpu_options(id, 1 << 6 | 1 << 7);
 
         Ok(())
     }
