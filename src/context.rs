@@ -34,6 +34,7 @@ extern "C" {
         disk_format: u32,
         read_only: bool,
     ) -> i32;
+    fn krun_add_serial_console_default(ctx_id: u32, input_fd: i32, output_fd: i32) -> i32;
     fn krun_add_net_unixstream(
         ctx_id: u32,
         c_path: *const c_char,
@@ -43,6 +44,7 @@ extern "C" {
         flags: u32,
     ) -> i32;
     fn krun_create_ctx() -> i32;
+    fn krun_disable_implicit_console(ctx_id: u32) -> i32;
     fn krun_init_log(target: RawFd, level: u32, style: u32, options: u32) -> i32;
     fn krun_set_gpu_options2(ctx_id: u32, virgl_flags: u32, shm_size: u64) -> i32;
     fn krun_set_vm_config(ctx_id: u32, num_vcpus: u8, ram_mib: u32) -> i32;
@@ -181,6 +183,17 @@ impl TryFrom<Args> for KrunContext {
         }
 
         if let Some(ref disk_image) = args.disk_image {
+            if args.serial {
+                unsafe { krun_disable_implicit_console(id) };
+                unsafe {
+                    krun_add_serial_console_default(
+                        id,
+                        io::stdin().as_raw_fd(),
+                        io::stdout().as_raw_fd(),
+                    )
+                };
+            }
+
             // Autodetecting the disk image format is a controversial topic as, in
             // general, is considered a dangerous practice. For "easy mode", we're
             // booting from EDK2 and configuring a single disk image as boot disk.

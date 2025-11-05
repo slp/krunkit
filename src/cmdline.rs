@@ -62,6 +62,10 @@ pub struct Args {
 
     /// Disk image for easy mode.
     pub disk_image: Option<String>,
+
+    /// Easy mode: use legacy serial console.
+    #[arg(long, short)]
+    pub serial: bool,
 }
 
 /// Parse the input string into a hash map of key value pairs, associating the argument with its
