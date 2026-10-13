@@ -18,10 +18,10 @@ jobs:
 
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+        uses: Homebrew/actions/setup-homebrew@main
 
       - name: Install dependencies
-        run: brew tap libkrun/krun && brew trust libkrun/krun && brew install virglrenderer clang-format libkrun
+        run: brew tap libkrun/krun && brew trust libkrun/krun && brew install clang-format libkrun
 
       - name: Build
         run: cargo build --release --verbose
